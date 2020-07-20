@@ -1,3 +1,10 @@
+/*****************************
+ * Title: TextureManager.h
+ * Author: Christian Bingman
+ * Description: Gives some basic helper functions for managing textures
+ * TODO: Move this to a util.h class
+*****************************/
+
 #pragma once
 #include "SDL2/SDL.h"
 #include <string>

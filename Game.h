@@ -1,15 +1,15 @@
 /*****************************
  * Title: Game.h
  * Author: Christian Bingman
- * Description: Main class for creating and modifying the SDL window
+ * Description: Main class for creating and modifying the SDL window. Activates entity manager.
 *****************************/
 #pragma once
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "TextureManager.h"
-#include "GameObject.h"
 #include "Log.h"
+#include "ECS.h"
 
 class Game
 {
@@ -17,11 +17,12 @@ private:
     bool isRunning;
     SDL_Window* window;
     TextureManager* texManage;
-    GameObject* player;
     void _initializeObjects();
 
 public:
     static SDL_Renderer* renderer;
+    
+
     Game(Logger* logger);
     ~Game();
 
@@ -32,6 +33,5 @@ public:
     void clean();
 
     static Logger* logger;
-
     bool running();
 };

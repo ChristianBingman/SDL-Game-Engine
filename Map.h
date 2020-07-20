@@ -1,3 +1,9 @@
+/*****************************
+ * Title: Map.h
+ * Author: Christian Bingman
+ * Description: Most of this class should be rewritten to support loading from map files
+*****************************/
+
 #pragma once
 #include "SDL2/SDL.h"
 
@@ -10,6 +16,7 @@ private:
     SDL_Texture* grass;
     SDL_Texture* water;
 
+    // TODO: Make dynamic
     int map[20][25];
 
 public:

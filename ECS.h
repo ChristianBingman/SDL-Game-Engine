@@ -35,9 +35,8 @@ inline ComponentID getComponentTypeID(){
 }
 
 /*
- * Aha, so it took me way too long to figure this out, but since getComponentTypeID
- * is inline when this runs typeid gets a value and since it is static getComponentTypeID()
- * will not get run again! Cool!
+ * Returns the component ID of an existing component otherwise
+ * a new ID is generated
  */
 template <typename T> inline ComponentID getComponentTypeID() noexcept
 {
@@ -62,7 +61,7 @@ using ComponentBitSet = std::bitset<maxComponents>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
 /*
- * New components will inherit this class. Please.
+ * New components will inherit this class.
  */
 class Component
 {
@@ -82,30 +81,28 @@ public:
 class Entity
 {
 private:
-    // Well that settles it.
-    bool active = true;
+    bool active;
 
-    // Unique pointers because they want to be different... and self-destruct because we are lazy :)
     std::vector<std::unique_ptr<Component>> components;
 
     ComponentArray componentArray;
     ComponentBitSet componentBitSet;
 public:
 
-    // This function updates components
+    Entity(){
+        active = true;
+    }
+
     void update() {
         for(auto& c : components) c->update();
     }
 
-    // This function draws components
     void draw() {
         for(auto& c : components) c->draw();
     }
 
-    // Well I guess it is not settled? I dunno just call the function below.
     bool isActive() const { return active; }
 
-    // Punches a hole into the wall. Your wall.
     void destroy() { active = false; }
 
     // Determines if an entity has a component by comparing the bitset
@@ -154,7 +151,7 @@ public:
 
 };
 
-// Manages the entities
+// Allows for calling simple functions to manage all of the entities at the same time
 class Manager
 {
 private:
@@ -178,7 +175,7 @@ public:
         }), std::end(entities));
     }
 
-    // Adds an entity
+    // Declares a new unique_ptr and adds it to the entity list
     Entity& addEntity(){
         Entity* e = new Entity();
         std::unique_ptr<Entity> uPtr(e);

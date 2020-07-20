@@ -2,14 +2,16 @@
 #include <iostream>
 #include "Map.h"
 #include "ECS.h"
-#include "Components.h"
+#include "Components/PositionComponent.h"
+#include "Components/SpriteComponent.h"
 
 SDL_Renderer* Game::renderer = nullptr;
 Logger* Game::logger = nullptr;
+Manager entityManager;
 Map* map;
-Manager manager;
-auto& newPlayer(manager.addEntity());
+auto& playerEntity(entityManager.addEntity());
 
+// Create the texture manager and assign the global logger and entity manager
 Game::Game(Logger* logger){
     Game::logger = logger;
     texManage = new TextureManager();
@@ -19,15 +21,18 @@ Game::~Game(){
     clean();
 }
 
+// Initializes SDL
 void Game::init(const char* title, int xPos, int yPos, int width, int height, bool fullscreen){
     int flags = 0;
 
+    // If fullscreen is enabled, enable the fullscreen flag
     if(fullscreen){
         flags = SDL_WINDOW_FULLSCREEN;
     }else{
         flags = SDL_WINDOW_SHOWN;
     }
 
+    // Initialize everything, we may need everything in the future, but maybe we can slim this down?
     if(SDL_Init(SDL_INIT_EVERYTHING) == 0){
         
         logger->log("SDL Initialized", 1);
@@ -42,21 +47,26 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
         if(renderer){
             logger->log("Renderer Created", 1);
         }
-
-        _initializeObjects();
-
         isRunning = true;
+
+        // Initializes our custom objects
+        _initializeObjects();
     } else {
         isRunning = false;
     }
 }
 
+// Initializes the objects that are added to the game
 void Game::_initializeObjects(){
-    player = new GameObject("assets/bird.png");
     map = new Map();
-    newPlayer.addComponent<PositionComponent>();
+    playerEntity.addComponent<PositionComponent>();
+    playerEntity.addComponent<SpriteComponent>("assets/Coin.png");
 }
 
+/*
+ * Determines if the X has been pressed
+ * TODO: Add more complex interaction with user
+ */
 void Game::handleEvents(){
     SDL_Event event;
     SDL_PollEvent(&event);
@@ -71,30 +81,29 @@ void Game::handleEvents(){
     }
 }
 
+// Calls entities update functions
 void Game::update(){
-    player->Update();
-    manager.update();
-    std::cout << newPlayer.getComponent<PositionComponent>().x() << "," << newPlayer.getComponent<PositionComponent>().y() << std::endl;
+    entityManager.update();
 }
 
+// Draws the map and registered entities and renders it
 void Game::render(){
     SDL_RenderClear(renderer);
     map->DrawMap();
-    // TODO: Add stuff to render
-    player->Render();
-    manager.draw();
+    entityManager.draw();
     SDL_RenderPresent(renderer);
 }
 
+// Calls destructors for most of the game objects
 void Game::clean(){
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     texManage->~TextureManager();
-    player->~GameObject();
     logger->log("Shutting Down SDL", 2);
 }
 
+// Boolean containing the value of whether the game is running
 bool Game::running(){
     return isRunning;
 }
