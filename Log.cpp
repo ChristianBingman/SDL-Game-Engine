@@ -11,6 +11,16 @@ Logger::~Logger()
     cout << "LOGS: Logger Cleanup" << endl;
 }
 
+/*
+ * Logs output to console
+ * + log_message - Message to be logged to console
+ * + log_level - how output will be displayed
+ * ++ 0 - General logs / unknown
+ * ++ 1 - Information
+ * ++ 2 - Warning
+ * ++ 3 - Error
+ * ++ 4 - Panic
+ */
 void Logger::log(string log_message, int log_level){
     string output;
     switch (log_level)

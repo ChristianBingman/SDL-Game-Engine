@@ -13,16 +13,20 @@ private:
     SDL_Rect srcRect, destRect;
 public:
     SpriteComponent() = default;
-    SpriteComponent(const char* filename){
+    SpriteComponent(const char* filename, int srcWidth = 32, int srcHeight = 32, int destWidth = 64, int destHeight = 64){
        tex = TextureManager::load(filename);
+       srcRect.w = srcWidth;
+       srcRect.h = srcHeight;
+       destRect.w = destWidth;
+       destRect.h = destHeight;
+       srcRect.x = srcRect.y = 0;
+       destRect.x = destRect.y = 0;
     }
 
     void init() override{
         position = &entity->getComponent<PositionComponent>();
-
-        srcRect.x = srcRect.y = 0;
-        srcRect.w = srcRect.h = 32;
-        destRect.w = destRect.h = 64;
+        destRect.x = position->x();
+        destRect.y = position->y();
     }
 
     void update() override{

@@ -9,19 +9,22 @@
 #include "SDL2/SDL_image.h"
 #include "TextureManager.h"
 #include "Log.h"
-#include "ECS.h"
+#include "InputManager.h"
+#include "Levels/Level1/Level1.h"
 
 class Game
 {
 private:
-    bool isRunning;
     SDL_Window* window;
     TextureManager* texManage;
     void _initializeObjects();
-
+    Level1 level1;
 public:
     static SDL_Renderer* renderer;
-    
+    static Logger* logger;
+    static bool isRunning;
+    static InputManager inputManager;
+    static int screen_width, screen_height;
 
     Game(Logger* logger);
     ~Game();
@@ -31,7 +34,5 @@ public:
     void update();
     void render();
     void clean();
-
-    static Logger* logger;
     bool running();
 };

@@ -10,17 +10,12 @@ private:
 public:
 
     PositionComponent(){
-        xpos = ypos = 50;
+        xpos = ypos = 0;
     }
 
     PositionComponent(int x, int y){
         xpos = x;
         ypos = y;
-    }
-
-    void update() override{
-        xpos++;
-        ypos++;
     }
 
     int x() { return xpos; }

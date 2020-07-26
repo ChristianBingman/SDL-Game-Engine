@@ -2,14 +2,19 @@
 #include <iostream>
 #include "Map.h"
 #include "ECS.h"
-#include "Components/PositionComponent.h"
-#include "Components/SpriteComponent.h"
 
-SDL_Renderer* Game::renderer = nullptr;
-Logger* Game::logger = nullptr;
-Manager entityManager;
-Map* map;
-auto& playerEntity(entityManager.addEntity());
+
+SDL_Renderer* Game::renderer = nullptr; // Static - Must be accessible from other classes
+Logger* Game::logger = nullptr; // Static - Also must be accessible from other classes
+int Game::screen_width; // Keep the screen width accessible TODO: Add scaling
+int Game::screen_height; // Keep the screen height accessible TODO: Add scaling
+bool Game::isRunning; // Determine if the game is running from anywhere
+InputManager Game::inputManager; // Global input manager
+Manager entityManager; // Global entity manager
+
+
+
+
 
 // Create the texture manager and assign the global logger and entity manager
 Game::Game(Logger* logger){
@@ -24,10 +29,14 @@ Game::~Game(){
 // Initializes SDL
 void Game::init(const char* title, int xPos, int yPos, int width, int height, bool fullscreen){
     int flags = 0;
+    Game::screen_width = width;
+    Game::screen_height = height;
+    Game::logger->log("Height: " + to_string(height) + " Width: " + to_string(width), 1);
 
     // If fullscreen is enabled, enable the fullscreen flag
     if(fullscreen){
         flags = SDL_WINDOW_FULLSCREEN;
+        Game::logger->log("Game is fullscreen", 1);
     }else{
         flags = SDL_WINDOW_SHOWN;
     }
@@ -41,45 +50,29 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
 
         if(window){
             logger->log("Window Created", 1);
+        }else
+        {
+            logger->log("SDL_CreateWindow: Could not be created!", 3);
         }
+        
 
         renderer = SDL_CreateRenderer(window, -1, 0);
         if(renderer){
             logger->log("Renderer Created", 1);
+        }else
+        {
+            logger->log("SDL_CreateRenderer: Could not be created!", 3);
         }
+        
         isRunning = true;
 
-        // Initializes our custom objects
-        _initializeObjects();
+        level1.build(entityManager);
+
     } else {
         isRunning = false;
     }
 }
 
-// Initializes the objects that are added to the game
-void Game::_initializeObjects(){
-    map = new Map();
-    playerEntity.addComponent<PositionComponent>();
-    playerEntity.addComponent<SpriteComponent>("assets/Coin.png");
-}
-
-/*
- * Determines if the X has been pressed
- * TODO: Add more complex interaction with user
- */
-void Game::handleEvents(){
-    SDL_Event event;
-    SDL_PollEvent(&event);
-    switch (event.type)
-    {
-    case SDL_QUIT:
-        isRunning = false;
-        break;
-    
-    default:
-        break;
-    }
-}
 
 // Calls entities update functions
 void Game::update(){
@@ -89,8 +82,8 @@ void Game::update(){
 // Draws the map and registered entities and renders it
 void Game::render(){
     SDL_RenderClear(renderer);
-    map->DrawMap();
     entityManager.draw();
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderPresent(renderer);
 }
 
@@ -105,5 +98,5 @@ void Game::clean(){
 
 // Boolean containing the value of whether the game is running
 bool Game::running(){
-    return isRunning;
+    return Game::isRunning;
 }
