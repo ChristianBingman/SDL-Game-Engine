@@ -1,12 +1,13 @@
-/*****************************
- * Title: Log.h
+/*
+ * Title: ECS.h
  * Author: Let's Make Games
- * Documentation & Cleaning: Christian Bingman
+ * Documentation and Cleanup: Christian Bingman
+ * Description: LMG's implementation of an Entity Component system.
  * Source: https://www.youtube.com/watch?v=XsvI8Sng6dk
- * Description: LMG's implementation of an Entity Component system. Try to replace this
- * with an actual ECS, but honestly it probably doesn't matter for the scope of this
- * project :)
-*****************************/
+ * Date Created: July 26, 2020
+ */
+
+// TODO: Replace this implementation with a better one
 
 #pragma once
 
@@ -25,9 +26,15 @@ class Entity;
 using ComponentID = std::size_t;
 
 /*
- * Returns a component id that will never be the same for any two components
+ * getComponentTypeID
+ * + Returns a component id that will never be the same for any two components
  * because the id is static. Inline function will be inserted into the place it
  * is called instead of being called as a function
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
  */
 inline ComponentID getComponentTypeID(){
     static ComponentID lastID = 0;
@@ -35,8 +42,14 @@ inline ComponentID getComponentTypeID(){
 }
 
 /*
- * Returns the component ID of an existing component otherwise
+ * getComponentTypeID<template>
+ * + Returns the component ID of an existing component otherwise
  * a new ID is generated
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
  */
 template <typename T> inline ComponentID getComponentTypeID() noexcept
 {
@@ -61,7 +74,8 @@ using ComponentBitSet = std::bitset<maxComponents>;
 using ComponentArray = std::array<Component*, maxComponents>;
 
 /*
- * New components will inherit this class.
+ * Title: Component
+ * + Class used for inheritance by Entity Components
  */
 class Component
 {
@@ -76,7 +90,8 @@ public:
 };
 
 /*
- * Entities are game objects that have components.
+ * Title: Entity
+ * + Manages how entities are located in memory and calls entity component functions
  */
 class Entity
 {
@@ -89,31 +104,82 @@ private:
     ComponentBitSet componentBitSet;
 public:
 
+    /*
+     * Entity::Entity
+     * + Entity constructor that says the entity is active
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     Entity(){
         active = true;
     }
 
+    /*
+     * Entity::update
+     * + Calls the component update functions
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     void update() {
         for(auto& c : components) c->update();
     }
 
+    /*
+     * Entity::draw
+     * + Calls the draw functions of components
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     void draw() {
         for(auto& c : components) c->draw();
     }
 
+    /*
+     * Entity::isActive
+     * + Returns the current state of an entity
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: bool
+     */
     bool isActive() const { return active; }
 
     void destroy() { active = false; }
 
-    // Determines if an entity has a component by comparing the bitset
+    /*
+     * Entity::hasComponent
+     * + Determines if an entity has a component by comparing the bitset
+     *
+     * Arguments:
+     * + template <typename T> - The component that is being checked for
+     *
+     * Return Type: bool
+     */
     template <typename T> bool hasComponent() const {
         return componentBitSet[getComponentTypeID<T>()];
     }
 
     /*
-     * Adds a component to an entity by creating the component and adding it 
+     * Entity::addComponent
+     * + Adds a component to an entity by creating the component and adding it 
      * to its arsenal of components. For world domination.
      * I dunno why it needs &&, but I'll figure it out eventually
+     *
+     * Arguments:
+     * + template <typename T> - The name of the component
+     * + TArgs... - Arguments that will be passed to the component's constructor
+     *
+     * Return Type: T& - Reference to component
      */
     template <typename T, typename... TArgs>
     T& addComponent(TArgs&&... mArgs){
@@ -139,7 +205,15 @@ public:
         return *component;
     }
 
-    // Returns a reference to a component
+    /*
+     * Entity::getComponent
+     * + Returns a reference to an existing coponent on an entity
+     *
+     * Arguments:
+     * + template <typename T> - The component
+     *
+     * Return Type: Component Reference
+     */
     template <typename T> T& getComponent() const {
         // Pulls the component from the array by its ID
         auto ptr(componentArray[getComponentTypeID<T>()]);
@@ -151,31 +225,66 @@ public:
 
 };
 
-// Allows for calling simple functions to manage all of the entities at the same time
+/*
+ * Title: Manager
+ * + Allows for calling simple functions to manage all of the entities at the same time
+ */
 class Manager
 {
 private:
     std::vector<std::unique_ptr<Entity>> entities;
 public:
 
-    // Calls entity update functions
+    /*
+     * Manager::update
+     * + Calls the update functions of all entities
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     void update(){
         for (auto& e : entities) e->update();
     }
 
-    // Calls entity draw functions
+    /*
+     * Manager::draw
+     * + Calls the draw function of all entities
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     void draw(){
         for (auto& e : entities) e->draw();
     }
 
-    // Removes inActive components by using a higher order reduce function
+    /*
+     * Manager::refresh
+     * + Removes inActive components by using a higher order reduce function
+     *
+     * Arguments:
+     * + None
+     *
+     * Return Type: void
+     */
     void refresh(){
         entities.erase(std::remove_if(std::begin(entities), std::end(entities), [](const std::unique_ptr<Entity> &mEntity){
             return !mEntity->isActive();
         }), std::end(entities));
     }
 
-    // Declares a new unique_ptr and adds it to the entity list
+    /*
+     * Manager::addEntity
+     * + Declares a new entity unique_ptr and adds it to the entity list
+     *
+     * Arguments:
+     * + Passed as an argument to an entity
+     *
+     * Return Type: Entity Reference
+     */
     Entity& addEntity(){
         Entity* e = new Entity();
         std::unique_ptr<Entity> uPtr(e);

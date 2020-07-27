@@ -1,8 +1,9 @@
-/*****************************
+/*
  * Title: main.cpp
  * Author: Christian Bingman
- * Description: Custom 2D Game Engine
-*****************************/
+ * Description: Procedure Engine
+ * Date Created: July 26, 2020
+ */
 
 #include <iostream>
 #include "SDL2/SDL.h"
@@ -13,8 +14,8 @@
 using namespace std;
 
 
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
 int main(int argc, char *argv[])
 {

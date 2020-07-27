@@ -1,3 +1,10 @@
+/*
+ * Title: Game.cpp
+ * Author: Christian Bingman
+ * Description: Game header functions
+ * Date Created: July 26, 2020
+ */
+
 #include "Game.h"
 #include <iostream>
 #include "Map.h"
@@ -11,22 +18,52 @@ int Game::screen_height; // Keep the screen height accessible TODO: Add scaling
 bool Game::isRunning; // Determine if the game is running from anywhere
 InputManager Game::inputManager; // Global input manager
 Manager entityManager; // Global entity manager
+const int INTERNAL_RESOLUTION_WIDTH = 1280;
+const int INTERNAL_RESOLUTION_HEIGHT = 720;
 
 
 
 
-
-// Create the texture manager and assign the global logger and entity manager
+/*
+ * Game::Game
+ * + Create the texture manager and assign the global logger and entity manager
+ *
+ * Arguments:
+ * + Logger* logger - assings the static logger for global access
+ *
+ * Return Type: void
+ */
 Game::Game(Logger* logger){
     Game::logger = logger;
-    texManage = new TextureManager();
 }
 
+/*
+ * Game::~Game
+ * + Calls the cleanup method
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 Game::~Game(){
     clean();
 }
 
-// Initializes SDL
+/*
+ * Game::init
+ * + Initializes the main gmae loop and assigns integrals variables
+ *
+ * Arguments:
+ * + const char* title - title for the window
+ * + int xPos - X Position for the window to be located on creation
+ * + int yPos - Y Position for the window to be located on creation
+ * + int width - Window width
+ * + int height - Window height
+ * + bool fullscreen - Whether or not to be fullscreen
+ *
+ * Return Type: void
+ */
 void Game::init(const char* title, int xPos, int yPos, int width, int height, bool fullscreen){
     int flags = 0;
     Game::screen_width = width;
@@ -47,7 +84,6 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
         logger->log("SDL Initialized", 1);
 
         window = SDL_CreateWindow(title, xPos, yPos, width, height, flags);
-
         if(window){
             logger->log("Window Created", 1);
         }else
@@ -65,7 +101,7 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
         }
         
         isRunning = true;
-
+        TextureManager::setTexScale(width, height, INTERNAL_RESOLUTION_WIDTH, INTERNAL_RESOLUTION_HEIGHT);
         level1.build(entityManager);
 
     } else {
@@ -74,12 +110,28 @@ void Game::init(const char* title, int xPos, int yPos, int width, int height, bo
 }
 
 
-// Calls entities update functions
+/*
+ * Game::update
+ * + Calls the entityManger update function, which calls the entity update functions
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 void Game::update(){
     entityManager.update();
 }
 
-// Draws the map and registered entities and renders it
+/*
+ * Game::render
+ * + Clears the screen and calls the draw function of each entity
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 void Game::render(){
     SDL_RenderClear(renderer);
     entityManager.draw();
@@ -87,16 +139,32 @@ void Game::render(){
     SDL_RenderPresent(renderer);
 }
 
-// Calls destructors for most of the game objects
+/*
+ * Game::clean
+ * + Calls destructors for most of the game objects
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 void Game::clean(){
+    // TODO: improve memory cleanup, preferably with Valgrind
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
-    texManage->~TextureManager();
     logger->log("Shutting Down SDL", 2);
 }
 
-// Boolean containing the value of whether the game is running
+/*
+ * Game::running
+ * + Returns the current running state of the game
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: bool
+ */
 bool Game::running(){
     return Game::isRunning;
 }

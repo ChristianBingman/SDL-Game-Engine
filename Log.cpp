@@ -1,11 +1,37 @@
+/*
+ * Title: Log.cpp
+ * Author: Christian Bingman
+ * Description: Logger header functions
+ * Date Created: July 26, 2020
+ */
+
 #include<iostream>
 #include "Log.h"
+#include "Game.h"
 
+/*
+ * Logger::Logger
+ * + Logger constructor
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 Logger::Logger(/* args */)
 {
     cout << "LOGS: Logger Initialized" << endl;
 }
 
+/*
+ * Logger::~Logger
+ * + Logger destructor
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 Logger::~Logger()
 {
     cout << "LOGS: Logger Cleanup" << endl;
@@ -39,6 +65,7 @@ void Logger::log(string log_message, int log_level){
         break;
     case 4:
         output.append("\033[0;35mPANIC: ");
+        Game::isRunning = false;
         break;
     default:
         output.append("INFO: ");
@@ -50,6 +77,15 @@ void Logger::log(string log_message, int log_level){
     cout << output << endl;
 }
 
+/*
+ * Logger::logStartApp
+ * + Prints MOTD style header for debug output
+ *
+ * Arguments:
+ * + None
+ *
+ * Return Type: void
+ */
 void Logger::logStartApp(){
     cout << "\033[1;32mWelcome to a Simple SDL App" << endl
         << "\tFunctions:" << endl

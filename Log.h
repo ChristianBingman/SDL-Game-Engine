@@ -1,14 +1,19 @@
-/*****************************
+/*
  * Title: Log.h
  * Author: Christian Bingman
- * Description: Logging class to allow for comprehensive and concise output
-*****************************/
+ * Description: Logging class to enable more creative debugging output
+ * Date Created: July 26, 2020
+ */
 #pragma once
 
 #include <string>
 
 using namespace std;
 
+/*
+ * Title: Logger
+ * + Logs debug output to screen
+ */
 class Logger
 {
 private:
