@@ -8,7 +8,7 @@
 #pragma once
 
 #include "../ECS.h"
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "PositionComponent.h"
 #include "../TextureManager.h"
 

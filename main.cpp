@@ -6,7 +6,7 @@
  */
 
 #include <iostream>
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "Log.h"
 #include "Game.h"
 

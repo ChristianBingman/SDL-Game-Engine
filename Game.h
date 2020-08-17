@@ -5,7 +5,7 @@
 *****************************/
 #pragma once
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 /*
  * Title: Game.h
  * Author: Christian Bingman
@@ -13,7 +13,7 @@
  * Date Created: July 26, 2020
  */
 
-#include "SDL2/SDL_image.h"
+#include "SDL_image.h"
 #include "TextureManager.h"
 #include "Log.h"
 #include "InputManager.h"

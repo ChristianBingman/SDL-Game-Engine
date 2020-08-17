@@ -9,7 +9,7 @@
 // The array doesn't NEED to be dynamic, but needs to fit better into 16 x 9
 
 #pragma once
-#include "SDL2/SDL.h"
+#include "SDL.h"
 
 /*
  * Title: Map
