@@ -424,3 +424,6 @@ FodyWeavers.xsd
     Blog
     About
 
+*.sln
+*.vcxproj
+*.filters
